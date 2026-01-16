@@ -1,50 +1,43 @@
 # 🏗️ SQL Data Warehouse: End-to-End Engineering Project
-**Transforming Fragmented ERP & CRM Data into a Unified Source of Truth**
+**Consolidating ERP & CRM Data for Strategic Business Intelligence**
 
 ## 📌 Project Overview
-This project demonstrates the construction of a modern data warehouse using the **Medallion Architecture**. The goal was to consolidate data from two disparate source systems—**CRM** and **ERP**—to provide a holistic view of business operations.
+This project demonstrates the construction of a modern data warehouse using the **Medallion Architecture**. The goal was to consolidate fragmented data from two disparate source systems—**CRM** and **ERP**—into a unified "Single Version of Truth."
 
-By implementing **Separation of Concerns (SoC)**, the pipeline ensures that raw data ingestion, business logic transformation, and analytical modeling are handled in independent, manageable layers.
-
----
-
-## 🛠️ System Architecture
-The data flows through three distinct layers within the **PostgreSQL** environment:
-
-### 🥉 1. Bronze Layer (The Landing Zone)
-* **Concern:** Raw Data Ingestion.
-* **Process:** Direct `COPY` from 6 source CSV files (Customers, Products, Sales, etc.).
-* **Integrity:** Data is kept in its original format to allow for full auditability and reprocessing.
-
-### 🥈 2. Silver Layer (The Cleaning Room)
-* **Concern:** Data Quality & Standardization.
-* **Key Transformations:**
-    * **Handling Nulls:** Replacing missing values in critical fields.
-    * **Deduplication:** Removing redundant records from the CRM/ERP merge.
-    * **Normalization:** Cleaning text fields (trimming spaces, standardizing case).
-    * **Data Casting:** Converting strings to proper Dates and Numerics.
-
-### 🥇 3. Gold Layer (The Analytics Hub)
-* **Concern:** Performance & Business Logic.
-* **Data Model:** Implemented a **Star Schema** consisting of:
-    * **Fact Tables:** Transactional data (Sales).
-    * **Dimension Tables:** Descriptive context (Customer, Product, Geography).
-* **Historization:** Implemented **Slowly Changing Dimensions (SCD)** to track attribute changes over time.
+By implementing the **Separation of Concerns (SoC)** principle, this pipeline ensures that data quality is managed in stages, moving from raw ingestion to business-ready analytical models.
 
 ---
 
-## 🚀 Key Features for Data Analysts
-* **Single Version of Truth:** Combined ERP and CRM datasets to eliminate "data silos."
-* **Automated Pipeline:** Utilized **Stored Procedures** to refresh data across all layers.
-* **Data Integrity:** Built-in checks to isolate records that fail quality standards.
-* **Data Catalog:** Comprehensive dictionary defining every column and business rule.
+## 🛠️ Data Lifecycle & Analyst Priorities
+
+### 🥉 1. Bronze: Integration & Raw Ingestion
+* **Goal:** Create a centralized landing zone for all source data.
+* **Process:** Loaded 6 core datasets (from the `/datasets` folder) into the Bronze layer.
+* **Analyst Value:** Combines customer profiles with transactional history, breaking down data silos between departments.
+
+### 🥈 2. Silver: Data Quality & Cleansing
+* **Goal:** Transform "dirty" source data into reliable information.
+* **Key Actions:**
+    * **Standardization:** Fixing inconsistent naming and formatting (e.g., Gender, Dates).
+    * **Deduplication:** Removing redundant records to ensure accurate reporting.
+    * **Null Management:** Identifying and treating missing values.
+* **Analyst Value:** High-quality data is the foundation of trust. This layer ensures that 100% of the data used in reporting is verified and clean.
+
+### 🥇 3. Gold: BI Analytics & Reporting
+* **Goal:** Deliver actionable insights via a **Star Schema** (Fact & Dimension tables).
+* **Strategic Focus Areas:**
+    * **Customer Behavior:** Analyzing lifecycle shifts and segmentation.
+    * **Product Performance:** Identifying high-growth categories and SKU velocity.
+    * **Sales Trends:** Time-series analysis to pinpoint seasonality and revenue drivers.
 
 ---
 
 ## 📂 Project Structure
+As shown in the repository, the project is organized to be modular and scalable:
 ```bash
-├── 01_Bronze_Setup.sql      # Schema creation and raw data loading
-├── 02_Silver_Cleansing.sql   # Data quality scripts and transformations
-├── 03_Gold_Modeling.sql     # Star schema view/table creation
-├── /data                    # Source CSV files from CRM & ERP
-└── README.md                # Project documentation
+├── datasets/     # Raw CRM & ERP source files (CSVs)
+├── docs/         # Data Catalog and architectural diagrams
+├── scripts/      # SQL scripts (01_Bronze, 02_Silver, 03_Gold)
+├── tests/        # Data quality check scripts
+├── LICENSE       # Project licensing
+└── README.md     # Project documentation & business context
